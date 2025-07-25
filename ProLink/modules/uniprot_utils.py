@@ -25,8 +25,29 @@ def get_protein_name_from_wp(wp_code):
     # Paso 3: eliminar la especie entre corchetes
     title = title.split(" [")[0].strip()
 
-    # Paso 4: eliminar prefijos como "MULTISPECIES: "
+    # Paso 4: eliminar solo prefijos no informativos si están antes de los dos puntos
     if ":" in title:
-        title = title.split(":", 1)[1].strip()
+        prefix, rest = title.split(":", 1)
+        prefix_clean = prefix.strip().upper()
+        unwanted_prefixes = {
+            "MULTISPECIES",
+            "HYPOTHETICAL PROTEIN",
+            "PUTATIVE",
+            "UNNAMED PROTEIN PRODUCT",
+            "UNCHARACTERIZED PROTEIN",
+            "PREDICTED",
+            "PROBABLE",
+            "POSSIBLE",
+            "GENERIC",
+            "UNSPECIFIED",
+            "UNKNOWN",
+            "AUTOMATIC ANNOTATION",
+            "PARTIAL",
+            "LOW QUALITY PROTEIN"
+        }
+        if prefix_clean in unwanted_prefixes:
+            print(f"[INFO] Prefijo eliminado del título: '{prefix.strip()}'")
+            title = rest.strip()
+
 
     return title
