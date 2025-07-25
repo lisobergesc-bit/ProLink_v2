@@ -71,3 +71,5 @@ def filter_valid_sequences(input_fasta, output_fasta):
     SeqIO.write(valid_sequences, output_fasta, "fasta")
     print(f"Secuencias válidas después del filtrado: {len(valid_sequences)}")  # Debug: Show number of valid sequences
     logger.info(f"Resultados guardados en {output_fasta}")
+
+    return valid_wp_codes
