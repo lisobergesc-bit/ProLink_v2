@@ -166,17 +166,22 @@ def annotate_uniprot_codes(
                     # Nombre de proteína y EC
                     protein_data = r.get("proteinDescription", {})
                     if incluir_nombre:
+                        logger.info("\nLooking for protein names")
                         row["Protein_name"] = extract_protein_name(protein_data)
                     if incluir_ec:
+                        logger.info("\nLooking for EC numers")
                         row["EC_number"] = extract_ec_number(protein_data)
 
                     # Datos adicionales con consulta por accession
                     if accession != "Not found":
                         if incluir_cofactores:
+                            logger.info("\nLooking for cofactors")
                             row["Cofactors"] = get_cofactors_from_accession(accession)
                         if incluir_pfam:
+                            logger.info("\nLooking for Pfam domains")
                             row["Pfam_domains"] = get_pfam_domains_from_accession(accession)
                         if incluir_alphafold:
+                            logger.info("\nLooking for AlphaFold IDs")
                             row["AlphaFoldDB_ID"] = get_alphafold_id_from_accession(accession)
                     else:
                         if incluir_cofactores: row["Cofactors"] = "None"
