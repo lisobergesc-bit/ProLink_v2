@@ -11,6 +11,21 @@ Blast:
   max_low_identity_seqs: -1
   additional_hits: 2000
 
+Annotation:
+  annotation_uniprot: False
+  incluir_organismo: False
+  incluir_nombre: False
+  incluir_ec: False
+  incluir_cofactores: False
+  incluir_pfam: False
+  incluir_alphafold: False
+
+Ligands:
+  ligands: False
+
+First wp:
+  first_wp: False
+
 Filtering:
   filter_uniprot: False
   
