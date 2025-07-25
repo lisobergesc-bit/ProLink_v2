@@ -22,7 +22,11 @@ def get_protein_name_from_wp(wp_code):
     if not title:
         raise ValueError(f"No se encontró un título para el UID {uid}")
 
-    # Paso 3: eliminar la parte entre corchetes (especie)
-    clean_name = title.split(" [")[0].strip()
+    # Paso 3: eliminar la especie entre corchetes
+    title = title.split(" [")[0].strip()
 
-    return clean_name
+    # Paso 4: eliminar prefijos como "MULTISPECIES: "
+    if ":" in title:
+        title = title.split(":", 1)[1].strip()
+
+    return title
