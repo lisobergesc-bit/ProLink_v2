@@ -78,8 +78,18 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
     min_low_identity_seqs = int(parameters['min_low_identity_seqs'])
     max_low_identity_seqs = int(parameters['max_low_identity_seqs'])
     additional_hits = int(parameters['additional_hits'])
-    #Filtering
+    # Filtering
     filter_uniprot = bool(parameters['filter_uniprot'])
+    # Annotation
+    annotation_uniprot = bool(parameters['annotation_uniprot'])
+    incluir_organismo = bool(parameters['incluir_organismo'])
+    incluir_nombre = bool(parameters['incluir_nombre'])
+    incluir_ec = bool(parameters['incluir_ec'])
+    incluir_cofactores = bool(parameters['incluir_cofactores'])
+    incluir_pfam = bool(parameters['incluir_pfam'])
+    incluir_alphafold = bool(parameters['incluir_alphafold'])
+    # Ligands
+    ligands = bool(parameters['ligands'])
     # Clustering
     cluster_seqs = bool(parameters['cluster_seqs'])
     identity_cluster = float(parameters['identity_cluster'])
@@ -87,6 +97,8 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
     identity_cluster_step = float(parameters['identity_cluster_step'])
     min_number_clusters = int(parameters['min_number_clusters'])
     max_number_clusters = int(parameters['max_number_clusters'])
+    # First wp
+    first_wp = bool(parameters['first_wp'])
     # Pfam domains
     check_pfam_domains = bool(parameters['check_pfam_domains'])
     # Alignment
