@@ -177,6 +177,30 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
 
         check_seq_in(seq_record, found_sequences_fastafile, rewrite=True, spaces=False)
 
+        # Obtener WP del query
+        wp_query = get_wp_from_code(query)
+        logger.info(f"WP de la proteína: {wp_query}")
+
+        # Obtener el Nombre de la proteína desde su WP
+        try:
+            logger.info(f"Buscando nombre de la proteína")
+            clean_name = get_protein_name_from_wp(wp_query)
+            logger.info(f"Nombre de la proteína: {clean_name}")
+        except Exception as e:
+            logger.warning(f"WARNING: Búsqueda de nombre fallida: {e}")
+
+        # Ligands annotation
+        if parameters.get('ligands', False):
+            logger.info("Intentando anotar ligandos_logger")
+            try:
+                annotate_ligands_from_fasta(
+                    os.path.join(output_dir, "seqs_blast.fasta"),
+                    output_csv=os.path.join(output_dir, "ligands.csv")
+                )
+                logger.info("Anotación de ligandos completada correctamente")
+            except Exception as e:
+                logger.debug("Error en annotate_ligands_from_fasta", exc_info=True)
+                logger.warning(f"WARNING: Anotación de ligandos fallida: {e}")
       
         # Optional filtering of Uniprot Sequences
         if filter_uniprot:
@@ -191,6 +215,22 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
             print("ERROR: Filtered file is empty.")
         else:
           logger.info("Skipping Filtering Sequences (filter_uniprot = False).")
+
+        #optional annotation
+        if annotation_uniprot:
+          logger.info(f"\n###  Annotating  ###\n")
+          try:
+              annotate_uniprot_codes(valid_wp_codes, output_file="anotacion.csv",
+                       incluir_organismo=incluir_organismo,
+                       incluir_nombre=incluir_nombre,
+                       incluir_ec=incluir_ec,
+                       incluir_cofactores=incluir_cofactores,
+                       incluir_pfam=incluir_pfam,
+                       incluir_alphafold=incluir_alphafold)
+              print("annotate_uniprot_codes completed successfully.")
+          except Exception as e:
+              logger.warning(f"annotate_uniprot_codes failed: {e}")
+              print(f"Warning: Anotacion fallida: {e}")
 
     
         if cluster_seqs:
@@ -211,6 +251,17 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
             sequences_fastafile_pfam = f"{output_dir}/seqs_blast_pfam.fasta"
             pfam_output = f"{output_dir}/seqs_blast_pfam.txt"
             align_basename = f"{output_dir}/seqs_blast_aligned"
+
+        if first_wp:
+          logger.info(f"Entrando en el módulo de ordenar WP")
+          reorder_fasta_with_study_sequence(
+              os.path.join(output_dir, "seqs_cluster.txt"),
+              os.path.join(output_dir, "seqs_cluster.fasta"),
+              wp_query,
+              os.path.join(output_dir, "my_sequence.fasta"),
+              os.path.join(output_dir, "seqs_cluster_interest.fasta")
+          )
+          sequences_fastafile = os.path.join(output_dir, "seqs_cluster_interest.fasta")
 
         if check_pfam_domains:
             logger.info("\nChecking Pfam domains")
@@ -241,7 +292,7 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
             if generate_tree:
                 logger.info("\nGenerating tree")
                 mega_output = f"{aligned_fastafile}.nwk"
-                tree(tree_type, bootstrap_replications, aligned_fastafile, mega_output)
+                tree(tree_type, bootstrap_replications, aligned_fastafile, mega_output, protein_name=clean_name)
         else:
             logger.info("\nSkipping alignment (and logo and tree))")
 
