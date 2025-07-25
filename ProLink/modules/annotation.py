@@ -199,21 +199,21 @@ def annotate_uniprot_codes(
                 logger.debug(f"📦 proteinDescription para {wp}: {protein_data}")
 
                 if incluir_nombre:
-                    logger.info("🔠 Buscando nombre de proteína")
+                    print(f"🔠 Buscando nombre de proteína")
                     row["Protein_name"] = extract_protein_name(protein_data)
                 if incluir_ec:
-                    logger.info("🧮 Buscando número EC")
+                    print(f"🧮 Buscando número EC")
                     row["EC_number"] = extract_ec_number(protein_data)
 
                 if accession != "Not found":
                     if incluir_cofactores:
-                        logger.info("🧪 Buscando cofactores")
+                        print(f"🧪 Buscando cofactores")
                         row["Cofactors"] = get_cofactors_from_accession(accession)
                     if incluir_pfam:
-                        logger.info("🔬 Buscando dominios Pfam")
+                        print(f"🔬 Buscando dominios Pfam")
                         row["Pfam_domains"] = get_pfam_domains_from_accession(accession)
                     if incluir_alphafold:
-                        logger.info("🔭 Buscando ID de AlphaFoldDB")
+                        print(f"🔭 Buscando ID de AlphaFoldDB")
                         row["AlphaFoldDB_ID"] = get_alphafold_id_from_accession(accession)
                 else:
                     if incluir_cofactores: row["Cofactors"] = "None"
