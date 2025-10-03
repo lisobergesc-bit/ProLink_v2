@@ -1,3 +1,4 @@
+
 import logging
 import subprocess
 import time
@@ -9,8 +10,10 @@ from .. import ProLink_path
 logger = logging.getLogger()
 
 def clean_label(label, protein_name=""):
+
     # Elimina códigos WP/XP/NP
     label = re.sub(r'(W|X|N)P[\s_]\d{9}\.\d', '', label)
+
     # Elimina "MULTISPECIES:" y descripciones
     label = re.sub(r'MULTISPECIES:\s*', '', label, flags=re.IGNORECASE)
 
@@ -26,9 +29,16 @@ def clean_label(label, protein_name=""):
 
     label = re.sub(r'[-]*', '', label).strip()
 
-    # Abrevia el género SOLO si no es "sp." después
-    label = re.sub(r"^[\s'_]*([A-Z])[a-zA-Z0-9]+[\s_](?!sp[\s\._])", r"\1_", label)
-    
+    # Elimina comillas iniciales y finales si existen
+    label = label.strip("'\"")
+
+    # Abrevia el género SOLO si hay al menos dos palabras y la segunda no es "sp."
+    label = re.sub(
+        r"^[\s_]*([A-Z])[a-zA-Z0-9]+[\s_]+(?!sp[\s\._])([a-z]+)",
+        r"\1_\2",
+        label
+    )
+
     return label.strip(" _")
 
 
@@ -85,7 +95,7 @@ def tree(tree_type:str, bootstrap_replications:int, muscle_output:str, mega_outp
         with open(mega_output, 'w') as f:
             f.write(cleaned_newick)
         logging.info(f"Cleaned Newick tree saved in '{mega_output}'")
-        logging.info("✅ cleaned_and_abb")
+        logging.info("cleaned_and_abb")
     except Exception as e:
         logger.error(f"ERROR while cleaning the Newick file: {e}")
         raise
