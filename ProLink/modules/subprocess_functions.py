@@ -9,8 +9,7 @@ from .. import ProLink_path
 
 logger = logging.getLogger()
 
-def clean_label(label, protein_name=""):
-
+def clean_label(label, protein_name=""): 
     # Elimina códigos WP/XP/NP
     label = re.sub(r'(W|X|N)P[\s_]\d{9}\.\d', '', label)
 
@@ -27,10 +26,14 @@ def clean_label(label, protein_name=""):
     label = re.sub(r'unclassified', '', label, flags=re.IGNORECASE)
     label = re.sub(r'Same[\s_]+Domains', '', label, flags=re.IGNORECASE)
 
+    # Elimina guiones sueltos
     label = re.sub(r'[-]*', '', label).strip()
 
     # Elimina comillas iniciales y finales si existen
     label = label.strip("'\"")
+
+    # ⚠️ Evita problemas de paréntesis en etiquetas Newick
+    label = re.sub(r'[()]', '_', label)
 
     # Abrevia el género SOLO si hay al menos dos palabras y la segunda no es "sp."
     label = re.sub(
