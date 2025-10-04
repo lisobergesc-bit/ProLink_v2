@@ -13,12 +13,12 @@ Blast:
 
 Annotation:
   annotation_uniprot: False
-  incluir_organismo: False
-  incluir_nombre: False
-  incluir_ec: False
-  incluir_cofactores: False
-  incluir_pfam: False
-  incluir_alphafold: False
+  include_organism: False
+  include_name: False
+  include_ec: False
+  include_cofactors: False
+  include_pfam: False
+  include_alphafold: False
 
 Ligands:
   ligands: False
@@ -55,3 +55,4 @@ Tree:
 
 Outputs:
   output_dir: ""
+
