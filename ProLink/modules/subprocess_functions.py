@@ -65,6 +65,15 @@ def clean_newick_string(newick_str, protein_name):
     return pattern.sub(replacer, newick_str)
 
 def align(muscle_input:str, muscle_output:str) -> None:
+    '''
+    Run a local alignment with MUSCLE v5
+    Parameters
+    ----------
+    muscle_input : str
+        Path of the input MUSCLE file
+    muscle_output : str
+        Path of the output MUSCLE file
+    '''
     logging.info(f"\n-- Aligning sequences with MUSCLE")
     muscle_cmd = ['muscle', '-super5', muscle_input, '-output', muscle_output]
     logging.debug(f"Running MUSCLE alignment: {' '.join(muscle_cmd)}")
