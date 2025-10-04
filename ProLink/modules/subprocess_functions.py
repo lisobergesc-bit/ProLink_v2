@@ -10,32 +10,32 @@ from .. import ProLink_path
 logger = logging.getLogger()
 
 def clean_label(label, protein_name=""): 
-    # Elimina códigos WP/XP/NP
+    # Removes WP/XP/NP codes
     label = re.sub(r'(W|X|N)P[\s_]\d{9}\.\d', '', label)
 
-    # Elimina "MULTISPECIES:" y descripciones
+    # Removes "MULTISPECIES:" and descriptions
     label = re.sub(r'MULTISPECIES:\s*', '', label, flags=re.IGNORECASE)
 
-    # Elimina nombre de la proteína si está presente
+    # Removes the protein name if present
     if protein_name:
         protein_parts = re.split(r'[_\s]+', protein_name)
         protein_regex = r'[\s_\-]*'.join(map(re.escape, protein_parts))
         label = re.sub(protein_regex, "", label, flags=re.IGNORECASE)
 
-    # Limpieza previa de palabras específicas
+    # Performs preliminary cleanup of specific words
     label = re.sub(r'unclassified', '', label, flags=re.IGNORECASE)
     label = re.sub(r'Same[\s_]+Domains', '', label, flags=re.IGNORECASE)
 
-    # Elimina guiones sueltos
+    # Removes isolated hyphens
     label = re.sub(r'[-]*', '', label).strip()
 
-    # Elimina comillas iniciales y finales si existen
+    # Removes leading and trailing quotation marks, if any
     label = label.strip("'\"")
 
-    # Evita problemas de paréntesis en etiquetas Newick
+    # Prevents issues with parentheses in Newick labels
     label = re.sub(r'[()]', '_', label)
 
-    # Abrevia el género SOLO si hay al menos dos palabras y la segunda no es "sp."
+    # Abbreviates the genus ONLY if there are at least two words and the second is not "sp."
     label = re.sub(
         r"^[\s_]*([A-Z])[a-zA-Z0-9]+[\s_]+(?!sp[\s\._])([a-z]+)",
         r"\1_\2",
@@ -47,8 +47,8 @@ def clean_label(label, protein_name=""):
 
 def clean_newick_string(newick_str, protein_name):
     if not protein_name:
-        raise ValueError("❌ Se esperaba un nombre de proteína pero no ha llegado.")
-    print(f" [DEBUG] Nombre de_la proteína recibido clean_newick_string: {protein_name}")
+        raise ValueError("A protein name was expected but not received")
+    print(f" [DEBUG] Protein name received clean_newick_string: {protein_name}")
     pattern = re.compile(
         r"('([^']+---C\d+[^']*)'|\"([^\"]+---C\d+[^\"]*)\"|([A-Za-z0-9 _\.\-]+---C\d+))",
         flags=re.IGNORECASE
