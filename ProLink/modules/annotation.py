@@ -11,7 +11,7 @@ url = "https://rest.uniprot.org/uniprotkb/search"
 
 def extract_protein_name(protein_data):
     """
-    Extrae el mejor nombre posible para la proteína:
+    Extracts the best possible protein name:
     1. recommendedName
     2. submissionNames[0]
     3. alternativeNames[0]
@@ -32,7 +32,7 @@ def extract_protein_name(protein_data):
 
 def extract_ec_number(protein_data):
     """
-    Extrae el primer número EC si está presente.
+    Extracts the first EC number if present
     """
     try:
         ec_list = protein_data.get("recommendedName", {}).get("ecNumbers", [])
@@ -44,31 +44,31 @@ def extract_ec_number(protein_data):
 
 def get_cofactors_from_accession(accession):
     """
-    Consulta UniProt con accession para extraer cofactores dentro de comments.
+    Queries UniProt using the accession to extract cofactors from 'comments'
     """
     url_entry = f"https://rest.uniprot.org/uniprotkb/{accession}.json"
     try:
         response = requests.get(url_entry)
         response.raise_for_status()
         entry = response.json()
-        logger.debug(f"📄 Entrada UniProt (cofactors) para {accession} obtenida correctamente")
+        logger.debug(f" UniProt entry (cofactors) for {accession} successfully retrieved")
     except Exception as e:
-        print(f"❌ Error al obtener entrada UniProt para {accession}: {e}")
-        logger.error(f"❌ Error en get_cofactors_from_accession: {e}")
+        print(f"Error retrieving UniProt entry for {accession}: {e}")
+        logger.error(f"Error in get_cofactors_from_accession: {e}")
         return "Error"
 
     cofactors = []
 
     comments = entry.get("comments")
-    logger.debug(f"📄 Tipo de 'comments' para {accession}: {type(comments)}")
+    logger.debug(f"Type of 'comments' for {accession}: {type(comments)}")
 
     if comments is None:
-        print(f"⚠️ 'comments' no existe para {accession}")
-        logger.warning(f"⚠️ 'comments' es None para {accession}")
+        print(f"'comments' does not exist for {accession}")
+        logger.warning(f"'comments' is None for {accession}")
         return "None"
     if not isinstance(comments, list):
-        print(f"⚠️ 'comments' no es una lista para {accession}. Es: {type(comments)}")
-        logger.warning(f"⚠️ 'comments' no es lista para {accession}")
+        print(f"'comments' is not a list for {accession}. Type: {type(comments)}")
+        logger.warning(f"'comments' is not a list for {accession}")
         return "None"
 
     for comment in comments:
@@ -88,23 +88,23 @@ def get_cofactors_from_accession(accession):
 
 def get_pfam_domains_from_accession(accession):
     """
-    Extrae dominios Pfam (id y EntryName) desde una entrada de UniProt.
+    Extracts Pfam domains (id and EntryName) from a UniProt entry
     """
     url_entry = f"https://rest.uniprot.org/uniprotkb/{accession}.json"
     try:
         response = requests.get(url_entry)
         response.raise_for_status()
         entry = response.json()
-        logger.debug(f"📄 Entrada UniProt (Pfam) para {accession} obtenida correctamente")
+        logger.debug(f"UniProt entry (Pfam) for {accession} successfully retrieved")
     except Exception as e:
-        print(f"❌ Error al obtener Pfam para {accession}: {e}")
-        logger.error(f"❌ Error en get_pfam_domains_from_accession: {e}")
+        print(f"Error retrieving Pfam for {accession}: {e}")
+        logger.error(f"Error in get_pfam_domains_from_accession: {e}")
         return "Error"
 
     pfam_domains = []
 
     crossrefs = entry.get("uniProtKBCrossReferences", [])
-    logger.debug(f"🔗 Tipo de 'uniProtKBCrossReferences' para {accession}: {type(crossrefs)}")
+    logger.debug(f"Type of 'uniProtKBCrossReferences' for {accession}: {type(crossrefs)}")
 
     for xref in crossrefs:
         if xref.get("database") == "Pfam":
@@ -120,21 +120,21 @@ def get_pfam_domains_from_accession(accession):
 
 def get_alphafold_id_from_accession(accession):
     """
-    Extrae el ID de AlphaFoldDB desde una entrada de UniProt.
+    Extracts AlphaFoldDB ID from a UniProt entry
     """
     url_entry = f"https://rest.uniprot.org/uniprotkb/{accession}.json"
     try:
         response = requests.get(url_entry)
         response.raise_for_status()
         entry = response.json()
-        logger.debug(f"📄 Entrada UniProt (AlphaFold) para {accession} obtenida correctamente")
+        logger.debug(f"UniProt entry (AlphaFold) for {accession} successfully retrieved")
     except Exception as e:
-        print(f"❌ Error al obtener AlphaFoldDB para {accession}: {e}")
-        logger.error(f"❌ Error en get_alphafold_id_from_accession: {e}")
+        print(f"Error retrieving AlphaFoldDB for {accession}: {e}")
+        logger.error(f"Error in get_alphafold_id_from_accession: {e}")
         return "Error"
 
     crossrefs = entry.get("uniProtKBCrossReferences", [])
-    logger.debug(f"🔗 Tipo de 'uniProtKBCrossReferences' para AlphaFold {accession}: {type(crossrefs)}")
+    logger.debug(f"Type of 'uniProtKBCrossReferences' for AlphaFold {accession}: {type(crossrefs)}")
 
     for xref in crossrefs:
         if xref.get("database") == "AlphaFoldDB":
@@ -155,10 +155,10 @@ def annotate_uniprot_codes(
     results = []
     url = "https://rest.uniprot.org/uniprotkb/search"
 
-    logger.info(f"🧬 Comenzando anotación de {len(valid_wp_codes)} códigos WP")
+    logger.info(f"Starting annotation of {len(valid_wp_codes)} WP codes")
 
     for wp in valid_wp_codes:
-        logger.info(f"\n🔍 Consultando UniProt para: {wp}")
+        print(f"\nQuerying UniProt for: {wp}")
         query_string = f"xref:RefSeq-{wp}"
         params = {
             "fields": "accession,organism_name,protein_name",
@@ -168,13 +168,13 @@ def annotate_uniprot_codes(
 
         try:
             response = requests.get(url, params=params)
-            logger.debug(f"🛰️ URL consultada: {response.url}")
+            logger.debug(f"Queried URL: {response.url}")
             response.raise_for_status()
             data = response.json()
-            logger.debug(f"📥 Respuesta JSON para {wp}: {data}")
+            logger.debug(f"JSON response for {wp}: {data}")
         except Exception as e:
-            print(f"❌ Error al consultar {wp}: {e}")
-            logger.error(f"❌ Excepción durante la consulta de {wp}: {e}")
+            print(f"Error querying {wp}: {e}")
+            logger.error(f"Exception during query for {wp}: {e}")
             row = {"WP_code": wp, "UniProt_accession": "error"}
             if incluir_organismo: row["Organism"] = "error"
             if incluir_nombre: row["Protein_name"] = "error"
@@ -187,7 +187,7 @@ def annotate_uniprot_codes(
 
         if data.get("results"):
             for r in data["results"]:
-                logger.debug(f"📌 Entrada UniProt procesada para {wp}: {r}")
+                logger.debug(f"UniProt entry processed for {wp}: {r}")
                 row = {"WP_code": wp}
                 accession = r.get("primaryAccession", "Not found")
                 row["UniProt_accession"] = accession
@@ -199,21 +199,21 @@ def annotate_uniprot_codes(
                 logger.debug(f"📦 proteinDescription para {wp}: {protein_data}")
 
                 if incluir_nombre:
-                    print(f"🔠 Buscando nombre de proteína")
+                    print(f"Searching for protein name")
                     row["Protein_name"] = extract_protein_name(protein_data)
                 if incluir_ec:
-                    print(f"🧮 Buscando número EC")
+                    print(f"Searching for EC number")
                     row["EC_number"] = extract_ec_number(protein_data)
 
                 if accession != "Not found":
                     if incluir_cofactores:
-                        print(f"🧪 Buscando cofactores")
+                        print(f"Searching for cofactors")
                         row["Cofactors"] = get_cofactors_from_accession(accession)
                     if incluir_pfam:
-                        print(f"🔬 Buscando dominios Pfam")
+                        print(f"Searching for Pfam domains")
                         row["Pfam_domains"] = get_pfam_domains_from_accession(accession)
                     if incluir_alphafold:
-                        print(f"🔭 Buscando ID de AlphaFoldDB")
+                        print(f"Searching for AlphaFoldDB ID")
                         row["AlphaFoldDB_ID"] = get_alphafold_id_from_accession(accession)
                 else:
                     if incluir_cofactores: row["Cofactors"] = "None"
@@ -222,7 +222,7 @@ def annotate_uniprot_codes(
 
                 results.append(row)
         else:
-            logger.warning(f"⚠️ No se encontraron resultados para {wp}")
+            logger.warning(f"No results found for {wp}")
             row = {"WP_code": wp, "UniProt_accession": "Not found"}
             if incluir_organismo: row["Organism"] = "Not found"
             if incluir_nombre: row["Protein_name"] = "Not found"
@@ -249,5 +249,5 @@ def annotate_uniprot_codes(
         writer.writeheader()
         writer.writerows(results)
 
-    logger.info(f"✅ Archivo CSV generado en: {output_file}")
-    print(f"✅ Archivo CSV generado en: {output_file}")
+    logger.info(f"CSV file generated at: {output_file}")
+    print(f"CSV file generated at: {output_file}")
