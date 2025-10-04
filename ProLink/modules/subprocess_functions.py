@@ -32,7 +32,7 @@ def clean_label(label, protein_name=""):
     # Elimina comillas iniciales y finales si existen
     label = label.strip("'\"")
 
-    # ⚠️ Evita problemas de paréntesis en etiquetas Newick
+    # Evita problemas de paréntesis en etiquetas Newick
     label = re.sub(r'[()]', '_', label)
 
     # Abrevia el género SOLO si hay al menos dos palabras y la segunda no es "sp."
