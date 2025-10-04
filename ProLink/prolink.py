@@ -82,12 +82,12 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
     filter_uniprot = bool(parameters['filter_uniprot'])
     # Annotation
     annotation_uniprot = bool(parameters['annotation_uniprot'])
-    incluir_organismo = bool(parameters['incluir_organismo'])
-    incluir_nombre = bool(parameters['incluir_nombre'])
-    incluir_ec = bool(parameters['incluir_ec'])
-    incluir_cofactores = bool(parameters['incluir_cofactores'])
-    incluir_pfam = bool(parameters['incluir_pfam'])
-    incluir_alphafold = bool(parameters['incluir_alphafold'])
+    include_organism = bool(parameters['include_organism'])
+    include_name = bool(parameters['include_name'])
+    include_ec = bool(parameters['include_ec'])
+    include_cofactors = bool(parameters['include_cofactors'])
+    include_pfam = bool(parameters['include_pfam'])
+    include_alphafold = bool(parameters['include_alphafold'])
     # Ligands
     ligands = bool(parameters['ligands'])
     # Clustering
@@ -221,12 +221,12 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
           logger.info(f"\n###  Annotating  ###\n")
           try:
               annotate_uniprot_codes(valid_wp_codes, output_file="anotacion.csv",
-                       incluir_organismo=incluir_organismo,
-                       incluir_nombre=incluir_nombre,
-                       incluir_ec=incluir_ec,
-                       incluir_cofactores=incluir_cofactores,
-                       incluir_pfam=incluir_pfam,
-                       incluir_alphafold=incluir_alphafold)
+                       include_organism=include_organism,
+                       include_name=include_name,
+                       include_ec=include_ec,
+                       include_cofactors=include_cofactors,
+                       include_pfam=include_pfam,
+                       include_alphafold=include_alphafold)
               print("annotate_uniprot_codes completed successfully.")
           except Exception as e:
               logger.warning(f"annotate_uniprot_codes failed: {e}")
