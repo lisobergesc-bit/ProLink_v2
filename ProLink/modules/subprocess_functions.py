@@ -46,9 +46,9 @@ def clean_label(label, protein_name=""):
 
 
 def clean_newick_string(newick_str, protein_name):
-     """
-     Cleans all labels in a Newick tree string by applying the clean_label function.
-     """
+    """
+    Cleans all labels in a Newick tree string by applying the clean_label function.
+    """
     if not protein_name:
         raise ValueError("A protein name was expected but not received")
     print(f" [DEBUG] Protein name received clean_newick_string: {protein_name}")
