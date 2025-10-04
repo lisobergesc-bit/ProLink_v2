@@ -145,12 +145,12 @@ def get_alphafold_id_from_accession(accession):
 def annotate_uniprot_codes(
     valid_wp_codes,
     output_file="annotation.csv",
-    incluir_organismo=True,
-    incluir_nombre=True,
-    incluir_ec=True,
-    incluir_cofactores=True,
-    incluir_pfam=True,
-    incluir_alphafold=True
+    include_organism=True,
+    include_name=True,
+    include_ec=True,
+    include_cofactors=True,
+    include_pfam=True,
+    include_alphafold=True
 ):
     results = []
     url = "https://rest.uniprot.org/uniprotkb/search"
@@ -176,12 +176,12 @@ def annotate_uniprot_codes(
             print(f"Error querying {wp}: {e}")
             logger.error(f"Exception during query for {wp}: {e}")
             row = {"WP_code": wp, "UniProt_accession": "error"}
-            if incluir_organismo: row["Organism"] = "error"
-            if incluir_nombre: row["Protein_name"] = "error"
-            if incluir_ec: row["EC_number"] = "error"
-            if incluir_cofactores: row["Cofactors"] = "error"
-            if incluir_pfam: row["Pfam_domains"] = "error"
-            if incluir_alphafold: row["AlphaFoldDB_ID"] = "error"
+            if include_organism: row["Organism"] = "error"
+            if include_name: row["Protein_name"] = "error"
+            if include_ec: row["EC_number"] = "error"
+            if include_cofactors: row["Cofactors"] = "error"
+            if include_pfam: row["Pfam_domains"] = "error"
+            if include_alphafold: row["AlphaFoldDB_ID"] = "error"
             results.append(row)
             continue
 
@@ -192,44 +192,44 @@ def annotate_uniprot_codes(
                 accession = r.get("primaryAccession", "Not found")
                 row["UniProt_accession"] = accession
 
-                if incluir_organismo:
+                if include_organism:
                     row["Organism"] = r.get("organism", {}).get("scientificName", "Not found")
 
                 protein_data = r.get("proteinDescription", {})
                 logger.debug(f"📦 proteinDescription para {wp}: {protein_data}")
 
-                if incluir_nombre:
+                if include_name:
                     print(f"Searching for protein name")
                     row["Protein_name"] = extract_protein_name(protein_data)
-                if incluir_ec:
+                if include_ec:
                     print(f"Searching for EC number")
                     row["EC_number"] = extract_ec_number(protein_data)
 
                 if accession != "Not found":
-                    if incluir_cofactores:
+                    if include_cofactors:
                         print(f"Searching for cofactors")
                         row["Cofactors"] = get_cofactors_from_accession(accession)
-                    if incluir_pfam:
+                    if include_pfam:
                         print(f"Searching for Pfam domains")
                         row["Pfam_domains"] = get_pfam_domains_from_accession(accession)
-                    if incluir_alphafold:
+                    if include_alphafold:
                         print(f"Searching for AlphaFoldDB ID")
                         row["AlphaFoldDB_ID"] = get_alphafold_id_from_accession(accession)
                 else:
-                    if incluir_cofactores: row["Cofactors"] = "None"
-                    if incluir_pfam: row["Pfam_domains"] = "None"
-                    if incluir_alphafold: row["AlphaFoldDB_ID"] = "None"
+                    if include_cofactors: row["Cofactors"] = "None"
+                    if include_pfam: row["Pfam_domains"] = "None"
+                    if include_alphafold: row["AlphaFoldDB_ID"] = "None"
 
                 results.append(row)
         else:
             logger.warning(f"No results found for {wp}")
             row = {"WP_code": wp, "UniProt_accession": "Not found"}
-            if incluir_organismo: row["Organism"] = "Not found"
-            if incluir_nombre: row["Protein_name"] = "Not found"
-            if incluir_ec: row["EC_number"] = "None"
-            if incluir_cofactores: row["Cofactors"] = "None"
-            if incluir_pfam: row["Pfam_domains"] = "None"
-            if incluir_alphafold: row["AlphaFoldDB_ID"] = "None"
+            if include_organism: row["Organism"] = "Not found"
+            if include_name: row["Protein_name"] = "Not found"
+            if include_ec: row["EC_number"] = "None"
+            if include_cofactors: row["Cofactors"] = "None"
+            if include_pfam: row["Pfam_domains"] = "None"
+            if include_alphafold: row["AlphaFoldDB_ID"] = "None"
             results.append(row)
 
     all_possible_fields = [
@@ -237,12 +237,12 @@ def annotate_uniprot_codes(
         "EC_number", "Cofactors", "Pfam_domains", "AlphaFoldDB_ID"
     ]
     included_fields = ["WP_code", "UniProt_accession"]
-    if incluir_organismo: included_fields.append("Organism")
-    if incluir_nombre: included_fields.append("Protein_name")
-    if incluir_ec: included_fields.append("EC_number")
-    if incluir_cofactores: included_fields.append("Cofactors")
-    if incluir_pfam: included_fields.append("Pfam_domains")
-    if incluir_alphafold: included_fields.append("AlphaFoldDB_ID")
+    if include_organism: included_fields.append("Organism")
+    if include_name: included_fields.append("Protein_name")
+    if include_ec: included_fields.append("EC_number")
+    if include_cofactors: included_fields.append("Cofactors")
+    if include_pfam: included_fields.append("Pfam_domains")
+    if include_alphafold: included_fields.append("AlphaFoldDB_ID")
 
     with open(output_file, mode="w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=included_fields, delimiter=';')
