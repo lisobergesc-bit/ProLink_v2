@@ -177,37 +177,37 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
 
         check_seq_in(seq_record, found_sequences_fastafile, rewrite=True, spaces=False)
 
-        # Obtener WP del query
+        # Get WP from the query
         wp_query = get_wp_from_code(query)
-        logger.info(f"WP de la proteína: {wp_query}")
+        logger.info(f"Protein WP: {wp_query}")
 
-        # Obtener el Nombre de la proteína desde su WP
+        # Get the protein name from its WP
         try:
-            logger.info(f"Buscando nombre de la proteína")
+            logger.info(f"Getting the protein name from its WP")
             clean_name = get_protein_name_from_wp(wp_query)
-            logger.info(f"Nombre de la proteína: {clean_name}")
+            logger.info(f"Protein name: {clean_name}")
         except Exception as e:
-            logger.warning(f"WARNING: Búsqueda de nombre fallida: {e}")
+            logger.warning(f"WARNING: Name lookup failed: {e}")
 
         # Ligands annotation
         if parameters.get('ligands', False):
-            logger.info("Intentando anotar ligandos_logger")
+            logger.info("Attempting to annotate ligands")
             try:
                 annotate_ligands_from_fasta(
                     os.path.join(output_dir, "seqs_blast.fasta"),
                     output_csv=os.path.join(output_dir, "ligands.csv")
                 )
-                logger.info("Anotación de ligandos completada correctamente")
+                logger.info("Ligand annotation completed successfully")
             except Exception as e:
-                logger.debug("Error en annotate_ligands_from_fasta", exc_info=True)
-                logger.warning(f"WARNING: Anotación de ligandos fallida: {e}")
+                logger.debug("Error in annotate_ligands_from_fasta", exc_info=True)
+                logger.warning(f"WARNING: Ligand annotation failed: {e}")
       
         # Optional filtering of Uniprot Sequences
         if filter_uniprot:
           filtered_sequences_fastafile = f"{output_dir}/seqs_blast_filtered.fasta"
           logger.info(f"\n###  Filtering  ###\n")
           valid_wp_codes = filter_valid_sequences(found_sequences_fastafile, filtered_sequences_fastafile)
-          # Verificar si el archivo filtrado tiene contenido
+          # Check if the filtered file has content
           if os.path.exists(filtered_sequences_fastafile) and os.path.getsize(filtered_sequences_fastafile) > 0:
             print(f"Filtered file in: {filtered_sequences_fastafile}")
             found_sequences_fastafile = filtered_sequences_fastafile
@@ -220,7 +220,7 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
         if annotation_uniprot:
           logger.info(f"\n###  Annotating  ###\n")
           try:
-              annotate_uniprot_codes(valid_wp_codes, output_file="anotacion.csv",
+              annotate_uniprot_codes(valid_wp_codes, output_file="annotation.csv",
                        include_organism=include_organism,
                        include_name=include_name,
                        include_ec=include_ec,
@@ -230,7 +230,7 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
               print("annotate_uniprot_codes completed successfully.")
           except Exception as e:
               logger.warning(f"annotate_uniprot_codes failed: {e}")
-              print(f"Warning: Anotacion fallida: {e}")
+              print(f"WARNING: Annotation failed: {e}")
 
     
         if cluster_seqs:
@@ -253,7 +253,7 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
             align_basename = f"{output_dir}/seqs_blast_aligned"
 
         if first_wp:
-          logger.info(f"Entrando en el módulo de ordenar WP")
+          logger.info(f"Entering the WP sorting module")
           reorder_fasta_with_study_sequence(
               os.path.join(output_dir, "seqs_cluster.txt"),
               os.path.join(output_dir, "seqs_cluster.fasta"),
