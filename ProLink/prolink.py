@@ -253,15 +253,23 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
             align_basename = f"{output_dir}/seqs_blast_aligned"
 
         if first_wp:
-          logger.info(f"Entering the WP sorting module")
-          reorder_fasta_with_study_sequence(
-              os.path.join(output_dir, "seqs_cluster.txt"),
-              os.path.join(output_dir, "seqs_cluster.fasta"),
-              wp_query,
-              os.path.join(output_dir, "my_sequence.fasta"),
-              os.path.join(output_dir, "seqs_cluster_interest.fasta")
-          )
-          sequences_fastafile = os.path.join(output_dir, "seqs_cluster_interest.fasta")
+            logger.info("Entering the WP sorting module")
+            try:
+                reorder_fasta_with_study_sequence(
+                    os.path.join(output_dir, "seqs_cluster.txt"),
+                    os.path.join(output_dir, "seqs_cluster.fasta"),
+                    wp_query,
+                    os.path.join(output_dir, "my_sequence.fasta"),
+                    os.path.join(output_dir, "seqs_cluster_interest.fasta")
+                )
+                sequences_fastafile = os.path.join(output_dir, "seqs_cluster_interest.fasta")
+                logger.info("reorder_fasta_with_study_sequence completed successfully.")
+            except Exception as e:
+                logger.warning(f"reorder_fasta_with_study_sequence failed: {e}")
+                print(f"WARNING: WP sorting failed: {e}")
+                sequences_fastafile = os.path.join(output_dir, "seqs_cluster.fasta")
+                logger.info("Falling back to original FASTA file (seqs_cluster.fasta).")
+
 
         if check_pfam_domains:
             logger.info("\nChecking Pfam domains")
