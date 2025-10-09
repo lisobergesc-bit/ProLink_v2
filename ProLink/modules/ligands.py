@@ -7,28 +7,28 @@ from Bio import SeqIO
 logger = logging.getLogger()
 
 def extract_pdb_codes_from_fasta(fasta_file):
-    """Extrae códigos PDB del archivo FASTA"""
-    logger.info("Intentando extraer códigos PDB del FASTA")
+    """Extract PDB codes from the FASTA file"""
+    logger.info("Attempting to extract PDB codes from FASTA")
     sequences = list(SeqIO.parse(fasta_file, "fasta"))
     pdb_codes = set()
 
     for seq in sequences:
         match = re.search(r'\b([A-Za-z0-9]{4})_[A-Za-z]\b', seq.description)
         if match:
-            code = match.group(1).split("_")[0]  # Solo los 4 caracteres antes del "_"
+            code = match.group(1).split("_")[0]  # Only the 4 characters before the "_"
             pdb_codes.add(code.upper())
 
     return pdb_codes
 
 
 def get_ligands_from_pdb(pdb_code):
-    """Consulta la API del PDB para extraer ligandos de un código"""
+    """Query the PDB API to extract ligands for a given code"""
     base_url = "https://data.rcsb.org/rest/v1/core"
     entry_url = f"{base_url}/entry/{pdb_code}"
 
     response = requests.get(entry_url)
     if not response.ok:
-        print(f"No se pudo acceder a la entrada {pdb_code}")
+        print(f"Could not access entry {pdb_code}")
         return []
 
     data = response.json()
@@ -50,10 +50,10 @@ def get_ligands_from_pdb(pdb_code):
 
 
 def annotate_ligands_from_fasta(fasta_file, output_csv):
-    """Función final que extrae códigos PDB y anota sus ligandos en un CSV"""
-    logger.info("Entrando en annotate_ligands_from_fasta")
+    """Main function that extracts PDB codes and annotates their ligands into a CSV file"""
+    logger.info("Entering annotate_ligands_from_fasta")
     pdb_codes = extract_pdb_codes_from_fasta(fasta_file)
-    print(f"Códigos PDB encontrados: {pdb_codes}")
+    print(f"PDB codes found: {pdb_codes}")
 
     all_data = []
     max_ligands = 0
@@ -70,10 +70,10 @@ def annotate_ligands_from_fasta(fasta_file, output_csv):
     for i in range(1, max_ligands + 1):
         headers.extend([f"Ligand {i}", f"Name {i}"])
 
-    logger.debug(f"Ruta del CSV de salida: {output_csv}")
+    logger.debug(f"Output CSV path: {output_csv}")
     with open(output_csv, "w", newline='', encoding='utf-8') as csvfile:
-        writer = csv.writer(csvfile, delimiter=';')  # Separador compatible con Excel español
+        writer = csv.writer(csvfile, delimiter=';')  # Separator compatible with Spanish Excel
         writer.writerow(headers)
         writer.writerows(all_data)
 
-    print(f"✅ Archivo CSV generado: {output_csv}")
+    print(f"CSV file generated: {output_csv}")
