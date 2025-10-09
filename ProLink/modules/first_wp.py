@@ -2,7 +2,7 @@ import requests
 
 def get_wp_from_code(code: str) -> str:
     """
-    Obtiene el código WP a partir de un código de entrada (como EMBL).
+    Get the WP code from an input code
     """
     base_url = "https://rest.uniprot.org/uniprotkb/search"
     params = {
@@ -23,7 +23,7 @@ def get_wp_from_code(code: str) -> str:
         if not accession:
             return None
 
-        # Obtener el WP desde la entrada
+        # Get the WP from the input
         entry_url = f"https://rest.uniprot.org/uniprotkb/{accession}.json"
         entry_resp = requests.get(entry_url)
         entry_resp.raise_for_status()
@@ -44,7 +44,7 @@ from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
 def reorder_fasta_with_study_sequence(txt_file, fasta_file, study_wp, study_fasta_file, output_fasta_file):
-    # Paso 1: Leer el archivo txt para encontrar el clúster del WP de estudio y sus descripciones
+    # Read the txt file to find the study WP cluster and its descriptions
     cluster_dict = {}
     current_cluster = None
     study_header = None
@@ -65,19 +65,19 @@ def reorder_fasta_with_study_sequence(txt_file, fasta_file, study_wp, study_fast
                     study_cluster = current_cluster
 
     if study_header is None:
-        print(f"No se encontró el código {study_wp} en el archivo txt.")
+        print(f"Code {study_wp} not found in the txt file")
         return
 
-    # Paso 2: Leer la secuencia de estudio desde my_sequence.fasta
+    # Read the study sequence from my_sequence.fasta
     study_seq_record = next(SeqIO.parse(study_fasta_file, "fasta"))
     study_seq = str(study_seq_record.seq)
     new_study_record = SeqRecord(
         seq=study_seq_record.seq,
-        id="",  # Eliminar id automático
+        id="",  # Remove automatic ID
         description=study_header
     )
 
-    # Paso 3: Leer el fasta original y clasificar las secuencias por clúster
+    # Read the original fasta file and sort sequences by cluster
     fasta_records_by_cluster = {cluster: [] for cluster in cluster_dict}
     for record in SeqIO.parse(fasta_file, "fasta"):
         header = record.description
@@ -86,15 +86,15 @@ def reorder_fasta_with_study_sequence(txt_file, fasta_file, study_wp, study_fast
             if cluster_id in fasta_records_by_cluster:
                 fasta_records_by_cluster[cluster_id].append(record)
 
-    # Paso 4: Reemplazar la primera secuencia del clúster correspondiente
+    # Replace the first sequence of the corresponding cluster
     original_records = fasta_records_by_cluster[study_cluster]
-    updated_records = [new_study_record] + original_records[1:]  # Sustituir cabeza
+    updated_records = [new_study_record] + original_records[1:]  # Replace header
     fasta_records_by_cluster[study_cluster] = updated_records
 
-    # Paso 5: Escribir todas las secuencias en el nuevo archivo fasta
+    # Write all sequences to the new fasta file
     all_new_records = []
     for cluster_id in sorted(fasta_records_by_cluster.keys(), key=lambda x: int(x)):
         all_new_records.extend(fasta_records_by_cluster[cluster_id])
 
     SeqIO.write(all_new_records, output_fasta_file, "fasta")
-    print(f"Archivo fasta actualizado: {output_fasta_file}")
+    print(f"Updated fasta file: {output_fasta_file}")
