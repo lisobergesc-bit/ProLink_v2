@@ -1,7 +1,9 @@
-import requests
-import re
+
 import logging
+import re
+import requests
 from Bio import SeqIO  # To properly handle FASTA files
+
 
 logger = logging.getLogger()
 
@@ -10,7 +12,7 @@ url = "https://rest.uniprot.org/uniprotkb/search"
 def check_uniprot_single(wp_code):
     """
     Verify the existence of a single WP code in UniProt.
-    
+
     Parameters:
     wp_code (str): WP code to verify.
 
@@ -24,15 +26,15 @@ def check_uniprot_single(wp_code):
         "size": 1  # We only need to check if it exists
     }
 
-    print(f"Consulta a UniProt: {params['query']}")  # Debug: Check what is being sent to UniProt
-    
+    logger.debug(f"Checking to UniProt: {params['query']}")
+
     try:
         response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()
         data = response.json()
         return bool(data.get("results"))  # Returns True if there's at least one result
     except requests.exceptions.RequestException as e:
-        logger.error(f"Error al conectar con UniProt: {e}")
+        logger.error(f"ERROR: Could not connect to UniProt: {e}")
         return False
 
 def filter_valid_sequences(input_fasta, output_fasta):
@@ -52,24 +54,24 @@ def filter_valid_sequences(input_fasta, output_fasta):
         match = re.search(r'((?:WP|XP|NP)_\d{9}\.\d)', seq.description)
         if match:
             wp_data[seq.description] = match.group(1)
-    
-    print(f"Códigos WP extraídos: {list(wp_data.values())}")  # Debug: Show extracted WP codes
-    
-    logger.info(f"Número total de secuencias: {len(sequences)}")
-    logger.info(f"Número de códigos WP encontrados: {len(wp_data)}")
+
+    logger.debug(f"Extracted WP codes: {list(wp_data.values())}")
+
+    logger.info(f"Total number of sequences: {len(sequences)}")
+    logger.info(f"Number of WP codes found: {len(wp_data)}")
 
     # Verify each WP code in UniProt individually
     valid_wp_codes = {wp for wp in wp_data.values() if check_uniprot_single(wp)}
 
     # Filter valid sequences
     valid_sequences = [
-        seq for seq in sequences 
+        seq for seq in sequences
         if seq.description not in wp_data or wp_data[seq.description] in valid_wp_codes
     ]
-   
+
     # Write the valid sequences to the new FASTA file
     SeqIO.write(valid_sequences, output_fasta, "fasta")
-    print(f"Secuencias válidas después del filtrado: {len(valid_sequences)}")  # Debug: Show number of valid sequences
-    logger.info(f"Resultados guardados en {output_fasta}")
+    logger.debug(f"Valid sequences after filtering: {len(valid_sequences)}")
+    logger.info(f"Results saved to {output_fasta}")
 
     return valid_wp_codes

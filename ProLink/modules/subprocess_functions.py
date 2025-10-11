@@ -1,11 +1,12 @@
 
 import logging
-import subprocess
-import time
 import os
 import re
+import subprocess
+import time
 
 from .. import ProLink_path
+
 
 logger = logging.getLogger()
 
@@ -49,10 +50,6 @@ def clean_newick_string(newick_str, protein_name):
     """
     Cleans all labels in a Newick tree string by applying the clean_label function.
     """
-    if not protein_name:
-        raise ValueError("A protein name was expected but not received")
-    print(f" [DEBUG] Protein name received clean_newick_string: {protein_name}")
-
     # Pattern to match labels that include the cluster marker. It matches labels that are
     # either quoted (single or double) or not quoted.
     pattern = re.compile(

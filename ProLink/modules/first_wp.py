@@ -1,4 +1,11 @@
+
+import logging
 import requests
+from Bio import SeqIO
+from Bio.SeqRecord import SeqRecord
+
+
+logger = logging.getLogger()
 
 def get_wp_from_code(code: str) -> str:
     """
@@ -37,11 +44,8 @@ def get_wp_from_code(code: str) -> str:
         return None
 
     except Exception as e:
-        print(f"❌ Error al obtener WP desde {code}: {e}")
+        logger.error(f"ERROR: Error retrieving WP from {code}: {e}")
         return None
-
-from Bio import SeqIO
-from Bio.SeqRecord import SeqRecord
 
 def reorder_fasta_with_study_sequence(txt_file, fasta_file, study_wp, study_fasta_file, output_fasta_file):
     # Read the txt file to find the study WP cluster and its descriptions
@@ -65,7 +69,7 @@ def reorder_fasta_with_study_sequence(txt_file, fasta_file, study_wp, study_fast
                     study_cluster = current_cluster
 
     if study_header is None:
-        print(f"Code {study_wp} not found in the txt file")
+        logger.error(f"ERROR: Code {study_wp} not found in the txt file")
         return
 
     # Read the study sequence from my_sequence.fasta
@@ -97,4 +101,4 @@ def reorder_fasta_with_study_sequence(txt_file, fasta_file, study_wp, study_fast
         all_new_records.extend(fasta_records_by_cluster[cluster_id])
 
     SeqIO.write(all_new_records, output_fasta_file, "fasta")
-    print(f"Updated fasta file: {output_fasta_file}")
+    logger.info(f"Updated fasta file: {output_fasta_file}")

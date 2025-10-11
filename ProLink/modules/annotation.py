@@ -1,11 +1,11 @@
-import requests
-import re
-import logging
+
 import csv
+import logging
+import requests
 from Bio import SeqIO  # To properly handle FASTA files
 
+
 logger = logging.getLogger()
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
 url = "https://rest.uniprot.org/uniprotkb/search"
 
@@ -51,10 +51,9 @@ def get_cofactors_from_accession(accession):
         response = requests.get(url_entry)
         response.raise_for_status()
         entry = response.json()
-        logger.debug(f" UniProt entry (cofactors) for {accession} successfully retrieved")
+        logger.debug(f"UniProt entry (cofactors) for {accession} successfully retrieved")
     except Exception as e:
-        print(f"Error retrieving UniProt entry for {accession}: {e}")
-        logger.error(f"Error in get_cofactors_from_accession: {e}")
+        logger.error(f"ERROR: Error retrieving UniProt entry for {accession}: {e}")
         return "Error"
 
     cofactors = []
@@ -63,12 +62,10 @@ def get_cofactors_from_accession(accession):
     logger.debug(f"Type of 'comments' for {accession}: {type(comments)}")
 
     if comments is None:
-        print(f"'comments' does not exist for {accession}")
-        logger.warning(f"'comments' is None for {accession}")
+        logger.warning(f"WARNING: 'comments' does not exist for {accession}")
         return "None"
     if not isinstance(comments, list):
-        print(f"'comments' is not a list for {accession}. Type: {type(comments)}")
-        logger.warning(f"'comments' is not a list for {accession}")
+        logger.warning(f"WARNING: 'comments' is not a list for {accession}. Type: {type(comments)}")
         return "None"
 
     for comment in comments:
@@ -97,8 +94,7 @@ def get_pfam_domains_from_accession(accession):
         entry = response.json()
         logger.debug(f"UniProt entry (Pfam) for {accession} successfully retrieved")
     except Exception as e:
-        print(f"Error retrieving Pfam for {accession}: {e}")
-        logger.error(f"Error in get_pfam_domains_from_accession: {e}")
+        logger.error(f"ERROR: Error retrieving Pfam for {accession}: {e}")
         return "Error"
 
     pfam_domains = []
@@ -129,8 +125,7 @@ def get_alphafold_id_from_accession(accession):
         entry = response.json()
         logger.debug(f"UniProt entry (AlphaFold) for {accession} successfully retrieved")
     except Exception as e:
-        print(f"Error retrieving AlphaFoldDB for {accession}: {e}")
-        logger.error(f"Error in get_alphafold_id_from_accession: {e}")
+        logger.error(f"ERROR: Error retrieving AlphaFoldDB for {accession}: {e}")
         return "Error"
 
     crossrefs = entry.get("uniProtKBCrossReferences", [])
@@ -158,7 +153,7 @@ def annotate_uniprot_codes(
     logger.info(f"Starting annotation of {len(valid_wp_codes)} WP codes")
 
     for wp in valid_wp_codes:
-        print(f"\nQuerying UniProt for: {wp}")
+        logger.info(f"\nQuerying UniProt for: {wp}")
         query_string = f"xref:RefSeq-{wp}"
         params = {
             "fields": "accession,organism_name,protein_name",
@@ -173,8 +168,7 @@ def annotate_uniprot_codes(
             data = response.json()
             logger.debug(f"JSON response for {wp}: {data}")
         except Exception as e:
-            print(f"Error querying {wp}: {e}")
-            logger.error(f"Exception during query for {wp}: {e}")
+            logger.error(f"ERROR: Error querying {wp}: {e}")
             row = {"WP_code": wp, "UniProt_accession": "error"}
             if include_organism: row["Organism"] = "error"
             if include_name: row["Protein_name"] = "error"
@@ -196,24 +190,24 @@ def annotate_uniprot_codes(
                     row["Organism"] = r.get("organism", {}).get("scientificName", "Not found")
 
                 protein_data = r.get("proteinDescription", {})
-                logger.debug(f"📦 proteinDescription para {wp}: {protein_data}")
+                logger.debug(f"proteinDescription for {wp}: {protein_data}")
 
                 if include_name:
-                    print(f"Searching for protein name")
+                    logger.info(f"Searching for protein name")
                     row["Protein_name"] = extract_protein_name(protein_data)
                 if include_ec:
-                    print(f"Searching for EC number")
+                    logger.info(f"Searching for EC number")
                     row["EC_number"] = extract_ec_number(protein_data)
 
                 if accession != "Not found":
                     if include_cofactors:
-                        print(f"Searching for cofactors")
+                        logger.info(f"Searching for cofactors")
                         row["Cofactors"] = get_cofactors_from_accession(accession)
                     if include_pfam:
-                        print(f"Searching for Pfam domains")
+                        logger.info(f"Searching for Pfam domains")
                         row["Pfam_domains"] = get_pfam_domains_from_accession(accession)
                     if include_alphafold:
-                        print(f"Searching for AlphaFoldDB ID")
+                        logger.info(f"Searching for AlphaFoldDB ID")
                         row["AlphaFoldDB_ID"] = get_alphafold_id_from_accession(accession)
                 else:
                     if include_cofactors: row["Cofactors"] = "None"
@@ -250,4 +244,3 @@ def annotate_uniprot_codes(
         writer.writerows(results)
 
     logger.info(f"CSV file generated at: {output_file}")
-    print(f"CSV file generated at: {output_file}")

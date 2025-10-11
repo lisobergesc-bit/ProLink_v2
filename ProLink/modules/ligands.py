@@ -1,8 +1,10 @@
+
+import csv
 import logging
 import re
 import requests
-import csv
 from Bio import SeqIO
+
 
 logger = logging.getLogger()
 
@@ -28,7 +30,7 @@ def get_ligands_from_pdb(pdb_code):
 
     response = requests.get(entry_url)
     if not response.ok:
-        print(f"Could not access entry {pdb_code}")
+        logger.error(f"ERROR: Could not access entry {pdb_code}")
         return []
 
     data = response.json()
@@ -53,7 +55,7 @@ def annotate_ligands_from_fasta(fasta_file, output_csv):
     """Main function that extracts PDB codes and annotates their ligands into a CSV file"""
     logger.info("Entering annotate_ligands_from_fasta")
     pdb_codes = extract_pdb_codes_from_fasta(fasta_file)
-    print(f"PDB codes found: {pdb_codes}")
+    logger.info(f"PDB codes found: {pdb_codes}")
 
     all_data = []
     max_ligands = 0
@@ -76,4 +78,4 @@ def annotate_ligands_from_fasta(fasta_file, output_csv):
         writer.writerow(headers)
         writer.writerows(all_data)
 
-    print(f"CSV file generated: {output_csv}")
+    logger.info(f"CSV file generated: {output_csv}")

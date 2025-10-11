@@ -202,21 +202,19 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
                 logger.debug("Error in annotate_ligands_from_fasta", exc_info=True)
                 logger.warning(f"WARNING: Ligand annotation failed: {e}")
       
-        # Optional filtering of Uniprot Sequences
+        # Filtering of Uniprot Sequences
         if filter_uniprot:
           filtered_sequences_fastafile = f"{output_dir}/seqs_blast_filtered.fasta"
           logger.info(f"\n###  Filtering  ###\n")
           valid_wp_codes = filter_valid_sequences(found_sequences_fastafile, filtered_sequences_fastafile)
           # Check if the filtered file has content
           if os.path.exists(filtered_sequences_fastafile) and os.path.getsize(filtered_sequences_fastafile) > 0:
-            print(f"Filtered file in: {filtered_sequences_fastafile}")
+            logger.info(f"Filtered file in: {filtered_sequences_fastafile}")
             found_sequences_fastafile = filtered_sequences_fastafile
           else:
-            print("ERROR: Filtered file is empty.")
-        else:
-          logger.info("Skipping Filtering Sequences (filter_uniprot = False).")
+            logger.error("ERROR: Filtered file is empty.")
 
-        # Optional annotation
+        # Annotation
         if annotation_uniprot:
           logger.info(f"\n###  Annotating  ###\n")
           try:
@@ -227,11 +225,8 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
                        include_cofactors=include_cofactors,
                        include_pfam=include_pfam,
                        include_alphafold=include_alphafold)
-              print("annotate_uniprot_codes completed successfully.")
           except Exception as e:
-              logger.warning(f"annotate_uniprot_codes failed: {e}")
-              print(f"WARNING: Annotation failed: {e}")
-
+              logger.warning(f"WARNING: Annotation failed: {e}")
     
         if cluster_seqs:
             cluster_results = f"{output_dir}/seqs_cluster"
@@ -253,7 +248,7 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
             align_basename = f"{output_dir}/seqs_blast_aligned"
 
         if first_wp:
-            logger.info("Entering the WP sorting module")
+            logger.info("\n###  WP sorting  ###")
             try:
                 reorder_fasta_with_study_sequence(
                     os.path.join(output_dir, "seqs_cluster.txt"),
@@ -263,42 +258,40 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
                     os.path.join(output_dir, "seqs_cluster_interest.fasta")
                 )
                 sequences_fastafile = os.path.join(output_dir, "seqs_cluster_interest.fasta")
-                logger.info("reorder_fasta_with_study_sequence completed successfully.")
             except Exception as e:
-                logger.warning(f"reorder_fasta_with_study_sequence failed: {e}")
-                print(f"WARNING: WP sorting failed: {e}")
+                logger.warning(f"WARNING: WP sorting failed: {e}")
                 sequences_fastafile = os.path.join(output_dir, "seqs_cluster.fasta")
                 logger.info("Falling back to original FASTA file (seqs_cluster.fasta).")
 
 
         if check_pfam_domains:
-            logger.info("\nChecking Pfam domains")
+            logger.info("\n###  Checking Pfam domains  ###")
             try:
                 pfam_fasta(seq_record, sequences_fastafile, sequences_fastafile_pfam, pfam_output)
                 sequences_fastafile = sequences_fastafile_pfam
             except:
                 logger.debug("", exc_info=True)
-                logger.warning("WARNING: Errors while checking Pfam domains. Skipping.")
+                logger.warning("WARNING: Errors while checking Pfam domains.")
 
         if align_seqs:
-            logger.info("\nAligning sequences")
+            logger.info("\n###  Aligning sequences  ###")
             aligned_fastafile = f"{align_basename}.fasta"
             align(sequences_fastafile, aligned_fastafile)
             if generate_logo:
-                logger.info("\nGenerating sequence logo")
+                logger.info("\n###  Generating sequence logo  ###")
                 weblogo_output = f"{output_dir}/logo.{weblogo_format}"
                 weblogo3(aligned_fastafile, weblogo_output, weblogo_format)
             if trim:
-                logger.info("\nTrimming alignment")
+                logger.info("\n###  Trimming alignment  ###")
                 align_output_trim = f"{align_basename}_trim.fasta"
                 trim_align(aligned_fastafile, align_output_trim)
                 aligned_fastafile = align_output_trim
                 if generate_logo:
-                    logger.info("\nGenerating trimmed sequence logo")
+                    logger.info("\n###  Generating trimmed sequence logo  ###")
                     weblogo_output_trim = f"{output_dir}/logo_trim.{weblogo_format}"
                     weblogo3(aligned_fastafile, weblogo_output_trim, weblogo_format)
             if generate_tree:
-                logger.info("\nGenerating tree")
+                logger.info("\n###  Generating tree  ###")
                 mega_output = f"{aligned_fastafile}.nwk"
                 tree(tree_type, bootstrap_replications, aligned_fastafile, mega_output, protein_name=clean_name)
         else:

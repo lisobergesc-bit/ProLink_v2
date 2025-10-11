@@ -1,5 +1,10 @@
+
+import logging
 import requests
 from xml.etree import ElementTree
+
+
+logger = logging.getLogger()
 
 def get_protein_name_from_wp(wp_code):
     base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
@@ -11,6 +16,7 @@ def get_protein_name_from_wp(wp_code):
     uid = esearch_root.findtext(".//Id")
 
     if not uid:
+        logger.error(f"ERROR: No UID found for WP code {wp_code}")
         raise ValueError(f"No title found for UID {uid}")
 
     # Get name (Title)
@@ -20,7 +26,8 @@ def get_protein_name_from_wp(wp_code):
     title = esummary_root.findtext(".//Item[@Name='Title']")
 
     if not title:
-        raise ValueError(f"No se encontró un título para el UID {uid}")
+        logger.error(f"ERROR: No title found for UID {uid}")
+        raise ValueError(f"No title found for UID {uid}")
 
     # Remove species name enclosed in brackets
     title = title.split(" [")[0].strip()
@@ -46,8 +53,7 @@ def get_protein_name_from_wp(wp_code):
             "LOW QUALITY PROTEIN"
         }
         if prefix_clean in unwanted_prefixes:
-            print(f"[INFO] Prefix removed from title: '{prefix.strip()}'")
+            logger.info(f"Prefix removed from title: '{prefix.strip()}'")
             title = rest.strip()
-
 
     return title
