@@ -10,7 +10,12 @@ r"""
         / ____//_/   /____//_____//_/ /_/ /_//_/ \_\
        / /
       / /                     Created by Víctor Sanz
-     /_/                  Continued by Sergio Boneta
+     /_/                                
+                                        Continued by
+                                      Claudia Gómez,
+                              Guillermo Quintanilla,
+                                       Sergio Boneta
+                              
                               University of Zaragoza
 
 """
