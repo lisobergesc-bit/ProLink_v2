@@ -1,13 +1,13 @@
 # ***ProLink***
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/15QAl4MMjMriP4uYhhYfUXmaH9hirxsmh#scrollTo=qR1kf7RG_NNP)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/unizar-flav/ProLink/blob/master/ProLink.ipynb)
 
 
 ProLink is a python script that allows to execute multiple proteomic analysis tools automatically.
 
 
 ## Usage
-This software is intended to be executed in Google Colab. To run it, open [this notebook](https://colab.research.google.com/drive/15QAl4MMjMriP4uYhhYfUXmaH9hirxsmh#scrollTo=qR1kf7RG_NNP) and follow these steps:
+This software is intended to be executed in Google Colab. To run it, open [this notebook](https://colab.research.google.com/github/unizar-flav/ProLink/blob/master/ProLink.ipynb) and follow these steps:
 
 **Step 1:** Run the first cell in order to install the dependencies required. It is only needed to do once everytime the execution environment is initialized.
 
