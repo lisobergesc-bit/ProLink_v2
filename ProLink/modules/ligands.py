@@ -8,8 +8,20 @@ from Bio import SeqIO
 
 logger = logging.getLogger()
 
-def extract_pdb_codes_from_fasta(fasta_file):
-    """Extract PDB codes from the FASTA file"""
+def extract_pdb_codes_from_fasta(fasta_file:str) -> set:
+    '''
+    Extract PDB codes from the FASTA file
+    
+    Parameters
+    ----------
+    fasta_file : str
+        Path to the input FASTA file
+    
+    Returns
+    -------
+    set
+        A set of unique PDB codes found in the FASTA file
+    '''
     logger.info("Attempting to extract PDB codes from FASTA")
     sequences = list(SeqIO.parse(fasta_file, "fasta"))
     pdb_codes = set()
@@ -22,9 +34,20 @@ def extract_pdb_codes_from_fasta(fasta_file):
 
     return pdb_codes
 
-
-def get_ligands_from_pdb(pdb_code):
-    """Query the PDB API to extract ligands for a given code"""
+def get_ligands_from_pdb(pdb_code:str) -> list:
+    '''
+    Query the PDB API to extract ligands for a given code
+    
+    Parameters
+    ----------
+    pdb_code : str
+        The PDB code to query
+    
+    Returns
+    -------
+    list of tuples
+        A list of tuples containing (ligand ID, ligand name)
+    '''
     base_url = "https://data.rcsb.org/rest/v1/core"
     entry_url = f"{base_url}/entry/{pdb_code}"
 
@@ -50,9 +73,17 @@ def get_ligands_from_pdb(pdb_code):
 
     return ligands
 
-
-def annotate_ligands_from_fasta(fasta_file, output_csv):
-    """Main function that extracts PDB codes and annotates their ligands into a CSV file"""
+def annotate_ligands_from_fasta(fasta_file:str, output_csv:str) -> None:
+    '''
+    Main function that extracts PDB codes and annotates their ligands into a CSV file
+    
+    Parameters
+    ----------
+    fasta_file : str
+        Path to the input FASTA file
+    output_csv : str
+        Path to the output CSV file
+    '''
     logger.info("Entering annotate_ligands_from_fasta")
     pdb_codes = extract_pdb_codes_from_fasta(fasta_file)
     logger.info(f"PDB codes found: {pdb_codes}")

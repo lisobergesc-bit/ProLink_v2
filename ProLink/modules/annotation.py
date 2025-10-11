@@ -9,13 +9,23 @@ logger = logging.getLogger()
 
 url = "https://rest.uniprot.org/uniprotkb/search"
 
-def extract_protein_name(protein_data):
-    """
+def extract_protein_name(protein_data:dict) -> str:
+    '''
     Extracts the best possible protein name:
     1. recommendedName
     2. submissionNames[0]
     3. alternativeNames[0]
-    """
+
+    Parameters
+    ----------
+    protein_data : dict
+        The 'proteinDescription' field from a UniProt entry.
+
+    Returns
+    -------
+    str
+        The extracted protein name or "Not found" if none is available.
+    '''
     try:
         return protein_data["recommendedName"]["fullName"]["value"]
     except (KeyError, TypeError):
@@ -30,10 +40,20 @@ def extract_protein_name(protein_data):
         pass
     return "Not found"
 
-def extract_ec_number(protein_data):
-    """
+def extract_ec_number(protein_data:dict) -> str:
+    '''
     Extracts the first EC number if present
-    """
+
+    Parameters
+    ----------
+    protein_data : dict
+        The 'proteinDescription' field from a UniProt entry.
+
+    Returns
+    -------
+    str
+        The extracted EC number or "None" if none is available.
+    '''
     try:
         ec_list = protein_data.get("recommendedName", {}).get("ecNumbers", [])
         if ec_list:
@@ -42,10 +62,20 @@ def extract_ec_number(protein_data):
         pass
     return "None"
 
-def get_cofactors_from_accession(accession):
-    """
+def get_cofactors_from_accession(accession:str) -> str:
+    '''
     Queries UniProt using the accession to extract cofactors from 'comments'
-    """
+
+    Parameters
+    ----------
+    accession : str
+        The UniProt accession number of the protein.
+
+    Returns
+    -------
+    str
+        A semicolon-separated string of cofactors or "None" if none are found.
+    '''
     url_entry = f"https://rest.uniprot.org/uniprotkb/{accession}.json"
     try:
         response = requests.get(url_entry)
@@ -83,10 +113,20 @@ def get_cofactors_from_accession(accession):
 
     return "; ".join(cofactors) if cofactors else "None"
 
-def get_pfam_domains_from_accession(accession):
-    """
+def get_pfam_domains_from_accession(accession:str) -> str:
+    '''
     Extracts Pfam domains (id and EntryName) from a UniProt entry
-    """
+
+    Parameters
+    ----------
+    accession : str
+        The UniProt accession number of the protein.
+
+    Returns
+    -------
+    str
+        A semicolon-separated string of Pfam domains or "None" if none are found.
+    '''
     url_entry = f"https://rest.uniprot.org/uniprotkb/{accession}.json"
     try:
         response = requests.get(url_entry)
@@ -114,10 +154,20 @@ def get_pfam_domains_from_accession(accession):
 
     return "; ".join(pfam_domains) if pfam_domains else "None"
 
-def get_alphafold_id_from_accession(accession):
-    """
+def get_alphafold_id_from_accession(accession:str) -> str:
+    '''
     Extracts AlphaFoldDB ID from a UniProt entry
-    """
+
+    Parameters
+    ----------
+    accession : str
+        The UniProt accession number of the protein.
+
+    Returns
+    -------
+    str
+        The extracted AlphaFoldDB ID or "None" if none is available.
+    '''
     url_entry = f"https://rest.uniprot.org/uniprotkb/{accession}.json"
     try:
         response = requests.get(url_entry)
@@ -137,16 +187,36 @@ def get_alphafold_id_from_accession(accession):
 
     return "None"
 
-def annotate_uniprot_codes(
-    valid_wp_codes,
-    output_file="annotation.csv",
-    include_organism=True,
-    include_name=True,
-    include_ec=True,
-    include_cofactors=True,
-    include_pfam=True,
-    include_alphafold=True
-):
+def annotate_uniprot_codes(valid_wp_codes:list[str],
+                           output_file:str = "annotation.csv",
+                           include_organism:bool = True,
+                           include_name:bool = True,
+                           include_ec:bool = True,
+                           include_cofactors:bool = True,
+                           include_pfam:bool = True,
+                           include_alphafold:bool = True) -> None:
+    '''
+    Annotate a list of WP codes by querying UniProt and extracting various fields
+
+    Parameters
+    ----------
+    valid_wp_codes : list of str
+        List of WP codes to annotate
+    output_file : str, optional
+        Path of the file to write the annotation results (def: 'annotation.csv')
+    include_organism : bool, optional
+        Include organism name in the output (def: True)
+    include_name : bool, optional
+        Include protein name in the output (def: True)
+    include_ec : bool, optional
+        Include EC number in the output (def: True)
+    include_cofactors : bool, optional
+        Include cofactors in the output (def: True)
+    include_pfam : bool, optional
+        Include Pfam domains in the output (def: True)
+    include_alphafold : bool, optional
+        Include AlphaFoldDB ID in the output (def: True)
+    '''
     results = []
     url = "https://rest.uniprot.org/uniprotkb/search"
 

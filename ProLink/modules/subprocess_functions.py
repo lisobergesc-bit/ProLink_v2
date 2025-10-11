@@ -10,7 +10,40 @@ from .. import ProLink_path
 
 logger = logging.getLogger()
 
-def clean_label(label, protein_name=""): 
+def align(muscle_input:str, muscle_output:str) -> None:
+    '''
+    Run a local alignment with MUSCLE v5
+    Parameters
+    ----------
+    muscle_input : str
+        Path of the input MUSCLE file
+    muscle_output : str
+        Path of the output MUSCLE file
+    '''
+    logging.info(f"\n-- Aligning sequences with MUSCLE")
+    muscle_cmd = ['muscle', '-super5', muscle_input, '-output', muscle_output]
+    logging.debug(f"Running MUSCLE alignment: {' '.join(muscle_cmd)}")
+    muscle_run = subprocess.run(muscle_cmd)
+    if muscle_run.returncode != 0:
+        logger.error(f"ERROR: MUSCLE failed")
+        raise RuntimeError(f"MUSCLE failed")
+
+def clean_label(label:str, protein_name:str="") -> str:
+    '''
+    Cleans a Newick label by removing unwanted parts and abbreviating the genus.
+
+    Parameters
+    ----------
+    label : str
+        The original Newick label
+    protein_name : str, optional
+        The protein name to remove from the label (def: "")
+
+    Returns
+    -------
+    str
+        The cleaned and abbreviated label
+    '''
     # Removes WP/XP/NP codes
     label = re.sub(r'(W|X|N)P[\s_]\d{9}\.\d', '', label)
 
@@ -45,11 +78,22 @@ def clean_label(label, protein_name=""):
 
     return label.strip(" _")
 
-
-def clean_newick_string(newick_str, protein_name):
-    """
+def clean_newick_string(newick_str:str, protein_name:str) -> str:
+    '''
     Cleans all labels in a Newick tree string by applying the clean_label function.
-    """
+    
+    Parameters
+    ----------
+    newick_str : str
+        The original Newick tree string
+    protein_name : str
+        The protein name to remove from the labels
+
+    Returns
+    -------
+    str
+        The cleaned Newick tree string
+    '''
     # Pattern to match labels that include the cluster marker. It matches labels that are
     # either quoted (single or double) or not quoted.
     pattern = re.compile(
@@ -60,24 +104,6 @@ def clean_newick_string(newick_str, protein_name):
         full_label = match.group(0)
         return clean_label(full_label, protein_name)
     return pattern.sub(replacer, newick_str)
-
-def align(muscle_input:str, muscle_output:str) -> None:
-    '''
-    Run a local alignment with MUSCLE v5
-    Parameters
-    ----------
-    muscle_input : str
-        Path of the input MUSCLE file
-    muscle_output : str
-        Path of the output MUSCLE file
-    '''
-    logging.info(f"\n-- Aligning sequences with MUSCLE")
-    muscle_cmd = ['muscle', '-super5', muscle_input, '-output', muscle_output]
-    logging.debug(f"Running MUSCLE alignment: {' '.join(muscle_cmd)}")
-    muscle_run = subprocess.run(muscle_cmd)
-    if muscle_run.returncode != 0:
-        logger.error(f"ERROR: MUSCLE failed")
-        raise RuntimeError(f"MUSCLE failed")
 
 def tree(tree_type:str, bootstrap_replications:int, muscle_output:str, mega_output:str, protein_name:str) -> None:
     '''
@@ -133,4 +159,4 @@ def tree(tree_type:str, bootstrap_replications:int, muscle_output:str, mega_outp
     except Exception as e:
         logger.error(f"ERROR while cleaning the Newick file: {e}")
         raise
-        
+

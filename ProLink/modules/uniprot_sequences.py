@@ -9,16 +9,20 @@ logger = logging.getLogger()
 
 url = "https://rest.uniprot.org/uniprotkb/search"
 
-def check_uniprot_single(wp_code):
-    """
+def check_uniprot_single(wp_code:str) -> bool:
+    '''
     Verify the existence of a single WP code in UniProt.
 
-    Parameters:
-    wp_code (str): WP code to verify.
+    Parameters
+    ----------
+    wp_code : str
+        WP code to verify.
 
-    Returns:
-    bool: True if the WP code exists in UniProt, False otherwise.
-    """
+    Returns
+    -------
+    bool
+        True if the WP code exists in UniProt, False otherwise.
+    '''
     params = {
         "query": f"xref:RefSeq-{wp_code}",
         "fields": "accession",
@@ -37,15 +41,18 @@ def check_uniprot_single(wp_code):
         logger.error(f"ERROR: Could not connect to UniProt: {e}")
         return False
 
-def filter_valid_sequences(input_fasta, output_fasta):
-    """
+def filter_valid_sequences(input_fasta:str, output_fasta:str) -> set:
+    '''
     Filters sequences by removing those whose WP codes do not exist in UniProt.
     Sequences without a WP_ code are retained.
 
-    Parameters:
-    input_fasta (str): Input FASTA file with sequences.
-    output_fasta (str): Output FASTA file with valid sequences.
-    """
+    Parameters
+    ----------
+    input_fasta : str
+        Input FASTA file with sequences.
+    output_fasta : str
+        Output FASTA file with valid sequences.
+    '''
     sequences = list(SeqIO.parse(input_fasta, "fasta"))
 
     # Extract WP_ codes from sequence descriptions

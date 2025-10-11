@@ -7,10 +7,20 @@ from Bio.SeqRecord import SeqRecord
 
 logger = logging.getLogger()
 
-def get_wp_from_code(code: str) -> str:
-    """
+def get_wp_from_code(code:str) -> str:
+    '''
     Get the WP code from an input code
-    """
+
+    Parameters
+    ----------
+    code : str
+        Input code (e.g., PDB code, UniProt accession)
+    
+    Returns
+    -------
+    str
+        Corresponding WP code, or None if not found
+    '''
     base_url = "https://rest.uniprot.org/uniprotkb/search"
     params = {
         "query": f"({code})",
@@ -47,7 +57,29 @@ def get_wp_from_code(code: str) -> str:
         logger.error(f"ERROR: Error retrieving WP from {code}: {e}")
         return None
 
-def reorder_fasta_with_study_sequence(txt_file, fasta_file, study_wp, study_fasta_file, output_fasta_file):
+def reorder_fasta_with_study_sequence(txt_file:str,
+                                      fasta_file:str,
+                                      study_wp:str,
+                                      study_fasta_file:str,
+                                      output_fasta_file:str) -> None:
+    '''
+    Reorder a FASTA file based on clusters defined in a txt file,
+    replacing the first sequence of the cluster containing the study WP code
+    with the sequence from a separate FASTA file.
+
+    Parameters
+    ----------
+    txt_file : str
+        Path to the txt file defining clusters
+    fasta_file : str
+        Path to the original FASTA file to reorder
+    study_wp : str
+        WP code of the study sequence
+    study_fasta_file : str
+        Path to the FASTA file containing the study sequence
+    output_fasta_file : str
+        Path to write the reordered FASTA file
+    '''
     # Read the txt file to find the study WP cluster and its descriptions
     cluster_dict = {}
     current_cluster = None

@@ -6,7 +6,20 @@ from xml.etree import ElementTree
 
 logger = logging.getLogger()
 
-def get_protein_name_from_wp(wp_code):
+def get_protein_name_from_wp(wp_code:str) -> str:
+    '''
+    Retrieve a cleaned protein name from a WP code using NCBI's E-utilities.
+    
+    Parameters
+    ----------
+    wp_code : str
+        The WP code to query
+    
+    Returns
+    -------
+    str
+        The cleaned protein name associated with the WP code.
+    '''
     base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
     
     # Get UID (NCBI ID)
