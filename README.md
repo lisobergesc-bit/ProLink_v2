@@ -24,28 +24,32 @@ This software is intended to be executed in Google Colab. To run it, open [this 
 | | |
 | hitlist_size                              | Number of found sequences to obtain after BLAST.                                                 |
 | blast_database                            | Database used in BLAST.                                                                          |
-| length_restrict                           | Boolean to resctrict the length of the found sequences with respect the query.                   |
+| length_restrict                           | Restrict the length of the found sequences with respect the query.                               |
 | length_margin                             | Number to multiply the query length and restrict the min and max length of the found sequences.  |
-| include_low_identity_seqs                 | Boolean to include low identity sequences in the output.                                         |
+| include_low_identity_seqs                 | Include low identity sequences in the output.                                                    |
 | identity_blast                            | Identity fraction to consider low identity (when using *Pro Blast* and to be included) (0-1).    |
-| pro_blast_                                | Boolean to select [*Pro BLAST*](#pro-blast) or regular *BLAST*.                                  |
+| pro_blast_                                | Select [*Pro BLAST*](#pro-blast) or regular *BLAST*.                                             |
 | min_low_identity_seqs                     | Minimum number of low identity seqs to find when using *Pro BLAST*.                              |
 | | |
-| cluster_seqs                              | Boolean to trigger the clustering of the sequences.                                              |
+| ligands                                   | Trigger searching for ligands in the found sequences (if from pdbaa).                            |
+| annotation_uniprot                        | Trigger the annotation of the found sequences (if from refseq_protein).                          |
+| first_wp                                  | Trigger the annotation of the found sequences with the first WP code (if from refseq_protein).   |
+| | |
+| cluster_seqs                              | Trigger the clustering of the sequences.                                                         |
 | identity_cluster                          | Initial minimum sequence identity treshold to cluster together (0-1).                            |
-| pro_clustering_                           | Boolean to select [*Pro Clustering*](#pro-clustering) or regular clustering.                     |
+| pro_clustering_                           | Select [*Pro Clustering*](#pro-clustering) or regular clustering.                                |
 | identity_cluster_step                     | Step to increase or decrease the minimum sequence identity threshold while *Pro Clustering*.     |
 | min_number_clusters                       | Minimum number of clusters allowed when using *Pro Clustering*.                                  |
 | max_number_clusters                       | Maximum number of clusters allowed when using *Pro Clustering*.                                  |
 | | |
-| check_pfam_domains                        | Boolean to trigger the checking of the Pfam domains of the query and sequences.                  |
+| check_pfam_domains                        | Trigger the checking of the Pfam domains of the query and sequences.                             |
 | | |
-| align_seqs                                | Boolean to trigger the alignment of sequences.                                                   |
-| trim                                      | Boolean to trigger trimming the alignment, retaining phylogenetically-informative sites.         |
+| align_seqs                                | Trigger the alignment of sequences.                                                              |
+| trim                                      | Trigger trimming the alignment, retaining phylogenetically-informative sites.                    |
 | | |
-| generate_logo                             | Boolean to trigger the generation of a sequence logo image.                                      |
+| generate_logo                             | Trigger the generation of a sequence logo image.                                                 |
 | | |
-| generate_tree                             | Boolean to trigger the generation of a phylogenetic tree.                                        |
+| generate_tree                             | Trigger the generation of a phylogenetic tree.                                                   |
 | tree_type                                 | Type of phylogenetic tree. Either "NJ" (Neighbour Joining) or "ML" (Maximum Likelihood).         |
 | bootstrap_replications                    | Number of bootstrap replications when generating the tree. Either 100, 250, 500, 1000 or 2000.   |
 
@@ -92,7 +96,7 @@ A regular clustering with the determined minimum sequence identity (`identity_cl
 
 ## References
 
-  > Steinegger, M., Söding., J. (2017). MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets. Nature Biotechnology, 35, 1026.
+  > Steinegger, M., Söding, J. (2017). MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets. Nature Biotechnology, 35, 1026.
 
   > Edgar, R. C. (2004). MUSCLE: multiple sequence alignment with high accuracy and high throughput. Nucleic Acids Research, 32(5), 1792-1797.
 

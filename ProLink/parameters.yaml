@@ -11,6 +11,24 @@ Blast:
   max_low_identity_seqs: -1
   additional_hits: 2000
 
+Annotation:
+  annotation_uniprot: False
+  include_organism: False
+  include_name: False
+  include_ec: False
+  include_cofactors: False
+  include_pfam: False
+  include_alphafold: False
+
+Ligands:
+  ligands: False
+
+First wp:
+  first_wp: False
+
+Filtering:
+  filter_uniprot: False
+  
 Clustering:
   cluster_seqs: False
   identity_cluster: 0.6
@@ -37,3 +55,4 @@ Tree:
 
 Outputs:
   output_dir: ""
+
