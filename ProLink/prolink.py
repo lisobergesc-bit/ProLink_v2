@@ -15,8 +15,8 @@ r"""
                                       Claudia Gómez,
                               Guillermo Quintanilla,
                                       Sergio Boneta,
-                                       Claudia Liso
-                              
+                                        Claudia Liso
+                                       
                               University of Zaragoza
 
 """
@@ -303,6 +303,7 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
         else:
             logger.info("\nSkipping alignment (and logo and tree))")
 
+        #Obtention of genetic context
         if genetic_context:
               logger.info("\n###  Extracting Genetic Neighborhood  ###")
               try:

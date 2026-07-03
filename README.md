@@ -57,6 +57,9 @@ This software is intended to be executed in Google Colab. To run it, open [this 
 | | |
 | genetic_context                           | Trigger the obtention of the genomical neighborhood.
 
+| | |
+| genetic_context                           | Trigger the obtention of the genomical neighborhood.
+
 ***Advanced parameters (in ProLink/parameters.yaml)***
 | Argument                                  | Description                                                                                      | Default value |
 | ----------------------------------------- | -------------------------------------------------------------------------------------------------|---------------|
