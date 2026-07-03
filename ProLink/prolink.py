@@ -14,7 +14,8 @@ r"""
                                         Continued by
                                       Claudia Gómez,
                               Guillermo Quintanilla,
-                                       Sergio Boneta
+                                      Sergio Boneta,
+                                       Claudia Liso
                               
                               University of Zaragoza
 
