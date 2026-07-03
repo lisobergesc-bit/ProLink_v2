@@ -302,6 +302,14 @@ def pro_link(query:str, parameters_default:dict = parameters_default, **paramete
         else:
             logger.info("\nSkipping alignment (and logo and tree))")
 
+        if genetic_context:
+              logger.info("\n###  Extracting Genetic Neighborhood  ###")
+              try:
+                genetic_neighborhood(protein_id=query, outputs_dir=output_dir)
+              except Exception as context_error:
+                logger.debug("Error in genetic_neighborhood module", exc_info=True)
+                logger.warning(f"WARNING: Genetic neighborhood module failed: {context_error}")
+
     except Exception as e:
         logger.debug("", exc_info=True)
         logger.error(f"\nERROR: Fatal error on query {seq_record.id}. Aborting.")
